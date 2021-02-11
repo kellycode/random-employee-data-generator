@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Random Employee Data Generator</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <link href="tabulator\tabulator.min.css" rel="stylesheet" type="text/css" />
+    <script src="tabulator\tabulator.min.js"></script>
+
+    <style>
+        #example-table {
+            width: 50%;
+            margin: 40px auto 0px auto;
+        }
+    </style>
+
+</head>
+
+<body>
+    <div id="example-table"></div>
+    <script>
+
+        MockDataMachine = function () {
+
+            this.division_list = [];
+            this.dataResult = [];
+
+            this.getRandomIntZeroTo = function (max) {
+                var tempMax = max / 10;
+                max = max - tempMax;
+                return Math.floor((Math.random() * max) + tempMax);
+            };
+
+            this.getRandomFractionFromTo = function (min, max) {
+                return Math.random() * (max - min) + min;
+            };
+
+            this.getRandomIntFromTo = function (min, max) {
+                return Math.floor(Math.random() * (max - min + 1)) + min;
+            };
+
+            this.getRandomDivision = function () {
+                if (this.division_list.length === 0) {
+                    for (let i = 0; i < 4; i++) {
+                        this.division_list.push(this.getRandomDivisionNameUpper())
+                    }
+                }
+                return this.division_list[Math.floor(Math.random() * this.division_list.length)];
+            };
+
+            this.getRandomName = function () {
+                var charsUpperCon = "BCDFGHJKLMNPQRSTVWXTZ";
+                var charsUpperVow = "AEIOU";
+                var chars = [];
+                chars[0] = "bcdfghklmnpqrstvwxyz";
+                chars[1] = "aeiou";
+                var string_length = this.getRandomIntFromTo(6, 10);
+                var randomName = '';
+                var s = Math.floor(Math.random() * 2);
+                if (s === 1) {
+                    randomName += charsUpperCon.charAt(Math.floor(Math.random() * charsUpperCon.length));
+                }
+                else {
+                    randomName += charsUpperVow.charAt(Math.floor(Math.random() * charsUpperVow.length));
+                }
+                do {
+                    randomName += chars[s].charAt(Math.floor(Math.random() * chars[s].length));
+                    s = 1 - s;
+                }
+                while (randomName.length < string_length);
+                return randomName;
+            };
+
+            this.getRandomDivisionNameUpper = function () {
+                var charsUpperCon = "BCDFGHJKLMNPQRSTVWXTZ";
+                var charsUpperVow = "AEIOU";
+                var chars = [];
+                chars[0] = charsUpperCon;
+                chars[1] = charsUpperVow;
+                var string_length = this.getRandomIntFromTo(6, 10);
+                var randomName = '';
+                var s = Math.floor(Math.random() * 2);
+                if (s === 1) {
+                    randomName += charsUpperCon.charAt(Math.floor(Math.random() * charsUpperCon.length));
+                }
+                else {
+                    randomName += charsUpperVow.charAt(Math.floor(Math.random() * charsUpperVow.length));
+                }
+                do {
+                    randomName += chars[s].charAt(Math.floor(Math.random() * chars[s].length));
+                    s = 1 - s;
+                }
+                while (randomName.length < string_length);
+                return randomName;
+            }
+
+            this.getRandomDivisionName = function () {
+                var charsUpper = "ABCDEFGHIJKLMNOPQRSTUVWXTZ";
+                var charsLower = "abcdefghiklmnopqrstuvwxyz";
+                var string_length = 8;
+                var randomName = '';
+                for (var i = 0; i < string_length; i++) {
+                    randomName = charsUpper.charAt(Math.floor(Math.random() * charsUpper.length));
+                    var rName = Math.floor(Math.random() * charsLower.length);
+                    randomName += charsLower.substring(rName, rName + 8);
+                }
+                return randomName;
+            };
+
+            this.createAndInsertEmps = function (startAt, askingFor) {
+                var lastParticipant = startAt;
+                var howMany = 100;
+                if (typeof askingFor !== 'object') {
+                    howMany = parseInt(askingFor);
+                }
+                for (var i = 0; i < howMany; i++) {
+                    var row = {
+                        //SrNo.,SSN,Ext,Last Name,First Name,Employee#,Ind Id#,Phone,Division
+                        'SrNo': (lastParticipant++), // Row#
+                        'SSN': this.getRandomIntZeroTo(999) + "-" + this.getRandomIntZeroTo(99) + "-" + this.getRandomIntZeroTo(9999), // SSN
+                        'Ext': this.getRandomIntZeroTo(999), // Extension
+                        'Last Name': this.getRandomName(), // Last Name
+                        'First Name': this.getRandomName(), // First Name
+                        'Employee#': this.getRandomIntZeroTo(99999), // Employee Number
+                        'Ind Id#': this.getRandomIntZeroTo(999), // ID
+                        'Phone': this.getRandomIntZeroTo(999) + "-" + this.getRandomIntZeroTo(999) + "-" + this.getRandomIntZeroTo(9999), // Phone
+                        'Division': this.getRandomDivision()// Division
+                    };
+                    this.dataResult.push(row);
+                }
+            };
+        };
+
+        let boo = new MockDataMachine();
+        boo.createAndInsertEmps(1, 250, boo.dataResult);
+
+        var table = new Tabulator("#example-table", {
+            data: boo.dataResult, //assign data to table
+            autoColumns: true, //create columns from data field names
+            layout: "fitColumns", //fit columns to width of table
+            responsiveLayout: "hide", //hide columns that dont fit on the table
+            tooltips: true, //show tool tips on cells
+            addRowPos: "top", //when adding a new row, add it to the top of the table
+            //history: true, //allow undo and redo actions on the table
+            pagination: "local", //paginate the data
+            paginationSize: 25, //allow 7 rows per page of data
+            //movableColumns: true, //allow column order to be changed
+            //resizableRows: true, //allow row order to be changed
+        });
+
+    </script>
+</body>
+
+</html>
